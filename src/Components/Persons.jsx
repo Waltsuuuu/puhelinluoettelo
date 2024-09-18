@@ -1,17 +1,20 @@
-
+import PropTypes from 'prop-types'
 
 const Persons = ( {filteredPersons} ) => {
-    console.log(typeof filteredPersons)
 
 
     return (
         <>
         {filteredPersons.map((person) => (
-        <p key={person.name}>
+        <p key={person.id}>
         {person.name} {person.number}</p>
         ))}
         </>
     )
+}
+
+Persons.propTypes = {
+    filteredPersons: PropTypes.array
 }
 
 export default Persons

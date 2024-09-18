@@ -46,10 +46,16 @@ const App = () => {
     } else if (numberExists) {
       alert('Number already exists in phonebook')
     } else {
-      setPersons(persons.concat(nameObject))
-      setNewName('')
-      setNewNumber('')
+      axios
+      .post('http://localhost:3001/persons', nameObject)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
     }
+    
+    console.log(persons)
   }
 
   const handleNewName = (event) => {
