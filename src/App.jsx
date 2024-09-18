@@ -3,6 +3,7 @@ import Filter from './Components/FIlter'
 import PersonForm from './Components/PersonForm'
 import Persons from './Components/Persons'
 import personsService from './Service/persons'
+import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -54,8 +55,6 @@ const App = () => {
         setNewNumber('')
       })
     }
-    
-
   }
 
   /* 
@@ -83,6 +82,19 @@ const App = () => {
     person.name.toLowerCase().includes(searchQuery.toLowerCase())
    )
 
+  const handleDelete = (id, name) => {
+    console.log('You pressed delete')
+    if (window.confirm(`Delete ${name}?`)){
+      personsService
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }
+
+    
+  }
+
 
   return (
     <div className="PhoneBookWrapper">
@@ -102,7 +114,7 @@ const App = () => {
 
       <h2>Numbers</h2>
       
-      <Persons filteredPersons={filteredPersons}/>
+      <Persons filteredPersons={filteredPersons} handleDelete={handleDelete}/>
     </div> 
   )
 
