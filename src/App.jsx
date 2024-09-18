@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Filter from './Components/FIlter'
 import PersonForm from './Components/PersonForm'
 import Persons from './Components/Persons'
-import axios from 'axios'
+import personsService from './Service/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -10,14 +10,13 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('') 
   const [searchQuery, setSearchQuery] = useState('')
 
-
   useEffect(() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
+    personsService
+      .getAll()
+      .then(initialPersons => {
         console.log('promise fulfilled')
-        setPersons(response.data)
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -46,17 +45,27 @@ const App = () => {
     } else if (numberExists) {
       alert('Number already exists in phonebook')
     } else {
-      axios
-      .post('http://localhost:3001/persons', nameObject)
-      .then(response => {
-        setPersons(persons.concat(response.data))
+      personsService
+      .create(nameObject)
+      .then(initialPerson => {
+        console.log(initialPerson)
+        setPersons(persons.concat(initialPerson))
         setNewName('')
         setNewNumber('')
       })
     }
     
-    console.log(persons)
+
   }
+
+  /* 
+        personsService
+      .create(nameObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+  */
 
   const handleNewName = (event) => {
     setNewName(event.target.value)
@@ -81,7 +90,7 @@ const App = () => {
 
       <Filter handler={handleSearchQuery} />
 
-      <h2>Add new:</h2>
+      <h2>Add new</h2>
         
       <PersonForm 
       addName={addName} 
