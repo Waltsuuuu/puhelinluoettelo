@@ -3,12 +3,15 @@ import Filter from './Components/FIlter'
 import PersonForm from './Components/PersonForm'
 import Persons from './Components/Persons'
 import personsService from './Service/persons'
+import Notification from './Components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('') 
   const [searchQuery, setSearchQuery] = useState('')
+  const [addedNotification, setAddedNotification] = useState(null)
+
 
   useEffect(() => {
     console.log('effect')
@@ -50,6 +53,10 @@ const App = () => {
             ));
             setNewName('');
             setNewNumber('');
+            setAddedNotification(`Updated ${newName}`)
+            setTimeout(() => {
+              setAddedNotification(null)
+            }, 4000)
           })
           .catch(error => {
             alert(`Failed to update ${newName}'s number`);
@@ -63,21 +70,16 @@ const App = () => {
         setPersons(persons.concat(initialPerson))
         setNewName('')
         setNewNumber('')
+        setAddedNotification(`Added ${newName}`)
+        setTimeout(() => {
+          setAddedNotification(null)
+        }, 4000)
       })
       .catch(error => {
         alert(`Failed to add ${newName}`);
       });
     }
   }
-
-  /* 
-        personsService
-      .create(nameObject)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
-        setNewName('')
-        setNewNumber('')
-  */
 
   const handleNewName = (event) => {
     setNewName(event.target.value)
@@ -103,6 +105,9 @@ const App = () => {
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
         })
+        .catch(error => {
+          alert('Failed to delete')
+        })
     }
 
     
@@ -116,7 +121,9 @@ const App = () => {
       <Filter handler={handleSearchQuery} />
 
       <h2>Add new</h2>
-        
+
+      <Notification message={addedNotification}/>
+
       <PersonForm 
       addName={addName} 
       handleNewName={handleNewName} 
