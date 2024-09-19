@@ -3,7 +3,6 @@ import Filter from './Components/FIlter'
 import PersonForm from './Components/PersonForm'
 import Persons from './Components/Persons'
 import personsService from './Service/persons'
-import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -21,11 +20,6 @@ const App = () => {
       })
   }, [])
 
-  const normalizeNumber = (number) => {
-    // Remove spaces, dashes, etc. for comparison
-    return number.replace(/[\s-]+/g, '')
-  }
-
   const addName = (event) => {
     event.preventDefault()
     const nameObject = {
@@ -33,18 +27,34 @@ const App = () => {
       number: newNumber
     }
 
-    const nameExists = persons.some(person => 
+    //Finds the person object with the same name (if it exists)
+    const nameExists = persons.find(person => 
       person.name.toLowerCase() === newName.toLowerCase()
-    )
+    );
 
-    const numberExists = persons.some(person =>
-      normalizeNumber(person.number) === normalizeNumber(newNumber)
-    )
-
+    console.log(nameExists)
+  
     if (nameExists) {
-      alert(`${newName} is already added to phonebook`)
-    } else if (numberExists) {
-      alert('Number already exists in phonebook')
+      const confirmUpdate = window.confirm(
+        `${newName} is already added to the phonebook, replace the old number with the new one?`
+      );
+  
+      if (confirmUpdate) {
+        const updatedPerson = { ...nameExists, number: newNumber };
+  
+        personsService
+          .update(nameExists.id, updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(person => 
+              person.id !== nameExists.id ? person : returnedPerson
+            ));
+            setNewName('');
+            setNewNumber('');
+          })
+          .catch(error => {
+            alert(`Failed to update ${newName}'s number`);
+          });
+      }
     } else {
       personsService
       .create(nameObject)
@@ -54,6 +64,9 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+      .catch(error => {
+        alert(`Failed to add ${newName}`);
+      });
     }
   }
 
