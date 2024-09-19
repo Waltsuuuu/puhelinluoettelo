@@ -11,6 +11,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('') 
   const [searchQuery, setSearchQuery] = useState('')
   const [addedNotification, setAddedNotification] = useState(null)
+  const [errorNotification, setErrorNotification] = useState(null)
+
 
 
   useEffect(() => {
@@ -58,8 +60,8 @@ const App = () => {
               setAddedNotification(null)
             }, 4000)
           })
-          .catch(error => {
-            alert(`Failed to update ${newName}'s number`);
+          .catch(() => {
+            alert(`Failed to update ${newName}`)
           });
       }
     } else {
@@ -75,8 +77,8 @@ const App = () => {
           setAddedNotification(null)
         }, 4000)
       })
-      .catch(error => {
-        alert(`Failed to add ${newName}`);
+      .catch(() => {
+        alert(`Failed to add ${newName}`)
       });
     }
   }
@@ -105,8 +107,15 @@ const App = () => {
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
         })
-        .catch(error => {
-          alert('Failed to delete')
+        .catch(() => {
+          setErrorNotification(
+            `Information of ${name} has already been removed from the server`
+          )
+          setTimeout(() => {
+            setErrorNotification(null)
+          }, 4000)
+          //Filters out the person with the id that was not deleted due to them not existing in the database
+          setPersons(persons.filter(person => person.id !== id))
         })
     }
 
@@ -122,7 +131,9 @@ const App = () => {
 
       <h2>Add new</h2>
 
-      <Notification message={addedNotification}/>
+      <Notification message={addedNotification} type="success"/>
+      <Notification message={errorNotification} type="error"/>  
+
 
       <PersonForm 
       addName={addName} 
