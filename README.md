@@ -5,6 +5,7 @@ User can add/remove numbers. <br/>
 User can search for names in the phonebook.<br/>
 Numbers are saved to a json db. <br/>
 
-# Development
+# To run locally:
+### in root:
 npm run dev<br/>
 json-server --port 3001 --watch db.json
